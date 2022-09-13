@@ -1,3 +1,6 @@
 #![no_std]
-pub mod comm;
-pub mod surprise;
+
+mod base;
+pub use base::Node;
+pub use base::Edge;
+pub use base::Graph;

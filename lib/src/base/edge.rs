@@ -4,4 +4,5 @@ pub struct Edge<NodeID, EdgeID, EdgeData> {
     pub a: NodeID,
     pub b: NodeID,
     pub data: EdgeData,
+    pub enabled: bool,
 }

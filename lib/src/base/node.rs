@@ -2,4 +2,5 @@
 pub struct Node<NodeID, NodeData> {
     pub id: NodeID,
     pub data: NodeData,
+    pub enabled: bool,
 }

@@ -20,7 +20,7 @@ type EdgeData = [u8; edge_data_bytes()];
 pub static mut GRAPH: Graph<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = Graph {
     next_node: 0,
     next_edge: 0,
-    nodes: [Node{id: 0, data: [0u8; edge_data_bytes()], enabled: false}; NODES],
+    nodes: [Node{id: 0, data: [0u8; node_data_bytes()], enabled: false}; NODES],
     edges: [Edge{id: 0, a: 0, b: 0, data: [0u8; edge_data_bytes()], enabled: false}; EDGES],
 };
 

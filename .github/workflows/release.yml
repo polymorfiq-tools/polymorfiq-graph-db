@@ -26,7 +26,7 @@ jobs:
       wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm.wasm
     steps:
     - uses: actions/checkout@v2
-    - run: rustup target add wasm32-unknown-unknown
+    - run: rustup +nightly target add wasm32-unknown-unknown
     - name: Build
       working-directory: ${{env.working-directory}}
       run: cargo build --release --target wasm32-unknown-unknown --verbose

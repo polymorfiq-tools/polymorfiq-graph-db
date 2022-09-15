@@ -34,26 +34,3 @@ jobs:
       with:
         name: core-wasm
         path: ${{env.wasm-file}}
-
-  generate_wat:
-    needs: build_wasm
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-      - name: Install wat-wasm
-        run: npm install wat-wasm -g
-      - uses: actions/download-artifact@master
-        with:
-          name: core-wasm
-          path: wasm
-      - name: Commit report
-        run: |
-          wat-wasm wasm/wasm.wasm -o bin/deployed.wat
-          git config --global user.name 'Automated WAT-WASM'
-          git config --global user.email 'automated-wasm@users.noreply.github.com'
-          git add bin/deployed.wat
-          git diff-index --quiet HEAD || git commit -m "Automated wat-wasm"
-          git push

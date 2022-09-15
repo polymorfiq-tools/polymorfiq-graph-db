@@ -13,6 +13,14 @@ impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData>
             EdgeID: core::ops::Add<usize, Output = EdgeID> + core::ops::Rem<usize, Output = EdgeID> + core::slice::SliceIndex<[Edge<NodeID, EdgeID, EdgeData>], Output = Edge<NodeID, EdgeID, EdgeData>> + core::marker::Copy,
     {
 
+    pub fn node_count(&self) -> usize {
+        NODES
+    }
+
+    pub fn edge_count(&self) -> usize {
+        EDGES
+    }
+
     pub fn next_node_id(&mut self) -> NodeID {
         self.next_node = (self.next_node + 1) % NODES;
         self.next_node

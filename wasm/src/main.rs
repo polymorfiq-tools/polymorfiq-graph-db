@@ -3,10 +3,14 @@
 #![feature(const_extern_fn)]
 use lib::{Graph, Node, Edge};
 
-const extern "C" fn node_count() -> usize { 0 }
-const extern "C" fn edge_count() -> usize { 0 }
-const extern "C" fn node_data_bytes() -> usize { 0 }
-const extern "C" fn edge_data_bytes() -> usize { 0 }
+#[no_mangle]
+const extern "C" fn node_count() -> usize { 5000 }
+#[no_mangle]
+const extern "C" fn edge_count() -> usize { 5000 }
+#[no_mangle]
+const extern "C" fn node_data_bytes() -> usize { 5000 }
+#[no_mangle]
+const extern "C" fn edge_data_bytes() -> usize { 5000 }
 
 type NodeID = usize;
 type EdgeID = usize;
@@ -23,6 +27,16 @@ pub static mut GRAPH: Graph<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = 
     nodes: [Node{id: 0, data: [0u8; node_data_bytes()], enabled: false}; NODES],
     edges: [Edge{id: 0, a: 0, b: 0, data: [0u8; edge_data_bytes()], enabled: false}; EDGES],
 };
+
+#[no_mangle]
+pub extern "C" fn get_node_count() -> usize {
+    unsafe { GRAPH.node_count() }
+}
+
+#[no_mangle]
+pub extern "C" fn get_edge_count() -> usize {
+    unsafe { GRAPH.edge_count() }
+}
 
 #[no_mangle]
 pub extern "C" fn next_node_id() -> NodeID {

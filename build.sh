@@ -8,8 +8,10 @@ pushd wasm && cargo build --release && popd;
 wasm-opt $ORIG_WASM_FILE -o $WASM_FILE --strip-debug -Oz;
 
 # Copy to relevant language library ports
+ORIG_WASM_SIZE=$(stat -f%z $ORIG_WASM_FILE);
+ORIG_WASM_SIZE_PRETTY=$(numfmt --to=iec-i --suffix=B --format="%9.2f" $ORIG_WASM_SIZE | tr -d '[:space:]');
 WASM_SIZE=$(stat -f%z $WASM_FILE);
-WASM_SIZE_PRETTY=$(numfmt --to=iec-i --suffix=B --format="%9.2f" $WASM_SIZE);
+WASM_SIZE_PRETTY=$(numfmt --to=iec-i --suffix=B --format="%9.2f" $WASM_SIZE | tr -d '[:space:]');
 
 cp $WASM_FILE languages/elixir/priv/wasm.wasm;
 cp $WASM_FILE languages/nodejs/src/vendor/wasm.wasm;
@@ -22,4 +24,4 @@ then
     wat-wasm $ORIG_WASM_FILE -o bin/latest.wat;
 fi
 
-printf "\nThe WASM filesize is $WASM_SIZE_PRETTY\n\n";
+printf "\nThe WASM filesize is $ORIG_WASM_SIZE_PRETTY -> $WASM_SIZE_PRETTY\n\n";

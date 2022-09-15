@@ -33,7 +33,7 @@ jobs:
     - name: Get Binaryen (wasm-opt)
       run: |
         wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz
-        tar -xf binaryen-version_110-x86_64-linux.tar.gz
+        tar -xvzf binaryen-version_110-x86_64-linux.tar.gz
     - name: Optimize
       run: |
         ./wasm-opt $WASM_FILE -o $WASM_FILE --strip-debug -Oz;

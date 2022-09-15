@@ -36,7 +36,7 @@ jobs:
         tar -xvzf binaryen-version_110-x86_64-linux.tar.gz
     - name: Optimize
       run: |
-        ./wasm-opt $WASM_FILE -o $WASM_FILE --strip-debug -Oz;
+        ./binaryen-version_110/bin/wasm-opt $WASM_FILE -o $WASM_FILE --strip-debug -Oz;
       env:
         WASM_FILE: ${{env.wasm-file}}
 

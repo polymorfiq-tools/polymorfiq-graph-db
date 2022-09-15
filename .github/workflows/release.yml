@@ -71,10 +71,10 @@ jobs:
           git config --global user.name 'Automated WAT-WASM';
           git config --global user.email 'automated-wasm@users.noreply.github.com';
           wat-wasm wasm/wasm.wasm -o bin/deployed-optimized.wat;
-          git add deployed-optimized.wat;
+          git add bin/deployed-optimized.wat;
 
           wat-wasm wasm/wasm-orig.wasm -o bin/deployed.wat;
-          git add deployed.wat;
+          git add bin/deployed.wat;
           git diff-index --quiet HEAD || git commit -m "Automated wat-wasm";
           git push;
         

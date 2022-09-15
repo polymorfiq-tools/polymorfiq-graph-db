@@ -1,31 +1,27 @@
 #![no_std]
 #![no_main]
 #![feature(const_extern_fn)]
+
 use lib::{Graph, Node, Edge};
 
-#[no_mangle]
-const extern "C" fn node_count() -> usize { 5000 }
-#[no_mangle]
-const extern "C" fn edge_count() -> usize { 5000 }
-#[no_mangle]
-const extern "C" fn node_data_bytes() -> usize { 5000 }
-#[no_mangle]
-const extern "C" fn edge_data_bytes() -> usize { 5000 }
+extern "C" {}
 
 type NodeID = usize;
 type EdgeID = usize;
 type NodeDataPointer = usize;
 type EdgeDataPointer = usize;
-pub const NODES: usize = node_count();
-pub const EDGES: usize = edge_count();
-type NodeData = [u8; node_data_bytes()];
-type EdgeData = [u8; edge_data_bytes()];
+pub const NODES: usize = 5000;
+pub const EDGES: usize = 5000;
+pub const NODE_DATA_BYTES: usize = 50;
+pub const EDGE_DATA_BYTES: usize = 50;
+type NodeData = [u8; NODE_DATA_BYTES];
+type EdgeData = [u8; EDGE_DATA_BYTES];
 
-pub static mut GRAPH: Graph<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = Graph {
+static mut GRAPH: Graph<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = Graph {
     next_node: 0,
     next_edge: 0,
-    nodes: [Node{id: 0, data: [0u8; node_data_bytes()], enabled: false}; NODES],
-    edges: [Edge{id: 0, a: 0, b: 0, data: [0u8; edge_data_bytes()], enabled: false}; EDGES],
+    nodes: [Node{id: 0, data: [0u8; NODE_DATA_BYTES], enabled: false}; NODES],
+    edges: [Edge{id: 0, a: 0, b: 0, data: [0u8; EDGE_DATA_BYTES], enabled: false}; EDGES],
 };
 
 #[no_mangle]

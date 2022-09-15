@@ -13,21 +13,29 @@ impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData>
             EdgeID: core::ops::Add<usize, Output = EdgeID> + core::ops::Rem<usize, Output = EdgeID> + core::slice::SliceIndex<[Edge<NodeID, EdgeID, EdgeData>], Output = Edge<NodeID, EdgeID, EdgeData>> + core::marker::Copy,
     {
 
+    pub fn next_node_id(&mut self) -> NodeID {
+        self.next_node = (self.next_node + 1) % NODES;
+        self.next_node
+    }
+
+    pub fn next_edge_id(&mut self) -> EdgeID {
+        self.next_edge = (self.next_edge + 1) % EDGES;
+        self.next_edge
+    }
+
     pub fn find_node(&self, at: NodeID) -> &Node<NodeID, NodeData> {
         &self.nodes[at]
+    }
+
+    pub fn find_mutable_node(&mut self, at: NodeID) -> &mut Node<NodeID, NodeData> {
+        &mut self.nodes[at]
     }
 
     pub fn find_edge(&self, at: EdgeID) -> &Edge<NodeID, EdgeID, EdgeData> {
         &self.edges[at]
     }
 
-    pub fn next_node(&mut self) -> &Node<NodeID, NodeData> {
-        self.next_node = (self.next_node + 1) % NODES;
-        self.find_node(self.next_node)
-    }
-
-    pub fn next_edge(&mut self) -> &Edge<NodeID, EdgeID, EdgeData> {
-        self.next_edge = (self.next_edge + 1) % EDGES;
-        self.find_edge(self.next_edge)
+    pub fn find_mutable_edge(&mut self, at: EdgeID) -> &mut Edge<NodeID, EdgeID, EdgeData> {
+        &mut self.edges[at]
     }
 }

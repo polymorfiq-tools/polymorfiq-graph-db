@@ -9,6 +9,7 @@ panic = "abort"
 [profile.release]
 panic = "abort"
 lto = true
+debug = false
 
 [dependencies]
 lib = { path = "../lib" }

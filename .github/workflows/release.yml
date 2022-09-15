@@ -1,7 +1,7 @@
 name: test
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
 
 env:
@@ -30,6 +30,14 @@ jobs:
     - name: Build
       working-directory: ${{env.working-directory}}
       run: cargo build --release --target wasm32-unknown-unknown --verbose
+    - name: Optimize
+      run: |
+        wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz
+        tar -xf binaryen-version_110-x86_64-linux.tar.gz
+        wasm-opt $WASM_FILE -o $WASM_FILE --strip-debug -Oz;
+      env:
+        WASM_FILE: ${{env.wasm-file}}
+
     - uses: actions/upload-artifact@master
       with:
         name: core-wasm
@@ -40,9 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
       - name: Install wat-wasm
         run: npm install wat-wasm -g
       - uses: actions/download-artifact@master
@@ -57,3 +62,4 @@ jobs:
           git add deployed.wat
           git diff-index --quiet HEAD || git commit -m "Automated wat-wasm"
           git push
+        

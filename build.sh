@@ -18,8 +18,8 @@ cp $WASM_FILE languages/react-app/public/vendor/wasm.wasm;
 # If wat-wasm is on the system, let's generate a text-based WASM for review
 if command -v wat-wasm &> /dev/null
 then
-    wat-wasm $WASM_FILE -o latest-optimized.wat;
-    wat-wasm $ORIG_WASM_FILE -o latest.wat;
+    wat-wasm $WASM_FILE -o bin/latest-optimized.wat;
+    wat-wasm $ORIG_WASM_FILE -o bin/latest.wat;
 fi
 
 printf "\nThe WASM filesize is $WASM_SIZE_PRETTY\n\n";

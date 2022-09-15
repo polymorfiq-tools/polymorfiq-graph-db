@@ -41,10 +41,11 @@ jobs:
         wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz
         tar -xvzf binaryen-version_110-x86_64-linux.tar.gz
     - name: Optimize
-      run: |
-        ./binaryen-version_110/bin/wasm-opt $ORIG_WASM_FILE -o $WASM_FILE --strip-debug -Oz;
       env:
         WASM_FILE: ${{env.wasm-file}}
+        ORIG_WASM_FILE: ${{env.orig-wasm-file}}
+      run: |
+        ./binaryen-version_110/bin/wasm-opt $ORIG_WASM_FILE -o $WASM_FILE --strip-debug -Oz;
 
     - uses: actions/upload-artifact@master
       with:

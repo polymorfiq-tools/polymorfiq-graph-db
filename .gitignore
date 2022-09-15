@@ -1,3 +1,2 @@
 target/
-/latest.wat
-/latest-*.wat
+/bin/latest*.wat

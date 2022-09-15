@@ -34,7 +34,7 @@ jobs:
       run: |
         wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz
         tar -xf binaryen-version_110-x86_64-linux.tar.gz
-        wasm-opt $WASM_FILE -o $WASM_FILE --strip-debug -Oz;
+        ./wasm-opt $WASM_FILE -o $WASM_FILE --strip-debug -Oz;
       env:
         WASM_FILE: ${{env.wasm-file}}
 

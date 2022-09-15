@@ -34,8 +34,9 @@ jobs:
         WASM_FILE: ${{env.wasm-file}}
         ORIG_WASM_FILE: ${{env.orig-wasm-file}}
       run: |
-        cargo build --release --target wasm32-unknown-unknown --verbose
-        mv $WASM_FILE $ORIG_WASM_FILE
+        cargo build --release --target wasm32-unknown-unknown --verbose;
+        cd ../;
+        mv $WASM_FILE $ORIG_WASM_FILE;
     - name: Get Binaryen (wasm-opt)
       run: |
         wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz

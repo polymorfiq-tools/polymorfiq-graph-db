@@ -1,0 +1,31 @@
+(module
+ (type $none_=>_i32 (func (result i32)))
+ (type $i32_=>_i32 (func (param i32) (result i32)))
+ (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+ (memory $0 16)
+ (global $global$0 i32 (i32.const 1048576))
+ (global $global$1 i32 (i32.const 1048576))
+ (export "memory" (memory $0))
+ (export "next_edge_id" (func $0))
+ (export "create_enabled_node" (func $1))
+ (export "create_enabled_edge" (func $2))
+ (export "next_node_id" (func $0))
+ (export "__data_end" (global $global$0))
+ (export "__heap_base" (global $global$1))
+ (func $0 (result i32)
+  (loop $label$1
+   (br $label$1)
+  )
+ )
+ (func $1 (param $0 i32) (result i32)
+  (loop $label$1
+   (br $label$1)
+  )
+ )
+ (func $2 (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+  (loop $label$1
+   (br $label$1)
+  )
+ )
+ ;; custom section "producers", size 75
+)

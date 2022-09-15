@@ -24,26 +24,34 @@ jobs:
     env:
       working-directory: ./wasm
       wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm.wasm
+      orig-wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm-orig.wasm
     steps:
     - uses: actions/checkout@v2
     - run: rustup +nightly target add wasm32-unknown-unknown
     - name: Build
       working-directory: ${{env.working-directory}}
-      run: cargo build --release --target wasm32-unknown-unknown --verbose
+      env:
+        WASM_FILE: ${{env.wasm-file}}
+        ORIG_WASM_FILE: ${{env.orig-wasm-file}}
+      run: |
+        cargo build --release --target wasm32-unknown-unknown --verbose
+        mv $WASM_FILE $ORIG_WASM_FILE
     - name: Get Binaryen (wasm-opt)
       run: |
         wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz
         tar -xvzf binaryen-version_110-x86_64-linux.tar.gz
     - name: Optimize
       run: |
-        ./binaryen-version_110/bin/wasm-opt $WASM_FILE -o $WASM_FILE --strip-debug -Oz;
+        ./binaryen-version_110/bin/wasm-opt $ORIG_WASM_FILE -o $WASM_FILE --strip-debug -Oz;
       env:
         WASM_FILE: ${{env.wasm-file}}
 
     - uses: actions/upload-artifact@master
       with:
         name: core-wasm
-        path: ${{env.wasm-file}}
+        path: |
+          ${{env.wasm-file}}
+          ${{env.orig-wasm-file}}
 
   generate_wat:
     needs: build_wasm
@@ -58,10 +66,13 @@ jobs:
           path: wasm
       - name: Commit report
         run: |
-          wat-wasm wasm/wasm.wasm -o deployed.wat
-          git config --global user.name 'Automated WAT-WASM'
-          git config --global user.email 'automated-wasm@users.noreply.github.com'
-          git add deployed.wat
-          git diff-index --quiet HEAD || git commit -m "Automated wat-wasm"
-          git push
+          git config --global user.name 'Automated WAT-WASM';
+          git config --global user.email 'automated-wasm@users.noreply.github.com';
+          wat-wasm wasm/wasm.wasm -o deployed-optimized.wat;
+          git add deployed-optimized.wat;
+
+          wat-wasm wasm/wasm-orig.wasm -o deployed.wat;
+          git add deployed.wat;
+          git diff-index --quiet HEAD || git commit -m "Automated wat-wasm";
+          git push;
         

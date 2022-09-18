@@ -1,9 +1,12 @@
 #![no_std]
-
 mod base;
 pub use base::Node;
 pub use base::Edge;
 pub use base::Graph;
+pub use base::NodeRef;
+pub use base::EdgeRef;
+
+pub mod collections;
 
 #[cfg(test)]
 mod tests {

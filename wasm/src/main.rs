@@ -20,7 +20,6 @@ pub const NODE_DATA_BYTES: usize = 50;
 pub const EDGE_DATA_BYTES: usize = 50;
 type NodeData = NodeDataContainer<NODE_DATA_BYTES>;
 type EdgeData = EdgeDataContainer<EDGE_DATA_BYTES>;
-
 static mut GRAPH: Graph<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = Graph::new(
     Node::new(0, NodeDataContainer::new()),
     Edge::new(0, EdgeDataContainer::new())

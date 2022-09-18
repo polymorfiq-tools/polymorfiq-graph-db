@@ -13,4 +13,9 @@ debug = false
 
 [dependencies]
 lib = { path = "../lib" }
-wee_alloc = { version = "0.4.2" }
+wee_alloc = { version = "0.4.2", optional = true }
+
+
+[features]
+alloc = ["wee_alloc"]
+default = []

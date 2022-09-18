@@ -4,7 +4,7 @@ set -euxo pipefail;
 # Generate WASM file
 ORIG_WASM_FILE="wasm/target/wasm32-unknown-unknown/release/wasm.wasm";
 WASM_FILE="wasm/target/wasm32-unknown-unknown/release/wasm-optimized.wasm";
-pushd wasm && cargo build --release && popd;
+pushd wasm && cargo build --release $@ && popd;
 wasm-opt $ORIG_WASM_FILE -o $WASM_FILE --strip-debug -Oz;
 
 # Copy to relevant language library ports

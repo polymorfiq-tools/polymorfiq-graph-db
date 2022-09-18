@@ -29,14 +29,6 @@ pub struct Graph<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeDat
 }
 
 impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData> Graph<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> {
-    pub fn node_count(&self) -> usize {
-        NODES
-    }
-
-    pub fn edge_count(&self) -> usize {
-        EDGES
-    }
-
     pub fn init_node(&mut self, id: NodeID, data: NodeData) -> NodeRef {
         let idx = self.next_node.fetch_add(1, Ordering::AcqRel);
         let node_ref = idx.into();

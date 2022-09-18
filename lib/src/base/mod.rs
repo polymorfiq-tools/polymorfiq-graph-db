@@ -6,5 +6,7 @@ pub use edge::Edge;
 
 mod graph;
 pub use graph::Graph;
-pub use graph::NodeRef;
-pub use graph::EdgeRef;
+
+mod refs;
+pub use refs::NodeRef;
+pub use refs::EdgeRef;

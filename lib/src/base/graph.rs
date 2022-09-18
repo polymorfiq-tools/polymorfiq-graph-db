@@ -3,23 +3,9 @@ use core::sync::atomic::AtomicUsize;
 use core::sync::atomic::Ordering;
 use super::Node;
 use super::Edge;
+use super::{NodeRef, EdgeRef};
 use crate::collections::NodeList;
 use crate::collections::EdgeList;
-
-#[derive(Clone, Copy)]
-pub struct NodeRef { pub(super) idx: usize }
-impl NodeRef {
-    pub(super) const fn new(idx: usize) -> Self { Self{idx: idx} }
-}
-impl Into<usize> for NodeRef { fn into(self) -> usize { self.idx } }
-impl Into<NodeRef> for usize { fn into(self) -> NodeRef { NodeRef{idx: self} } }
-impl Default for NodeRef { fn default() -> Self { NodeRef{idx: 0} } }
-
-#[derive(Clone, Copy)]
-pub struct EdgeRef { pub(super) idx: usize }
-impl Into<usize> for EdgeRef { fn into(self) -> usize { self.idx } }
-impl Into<EdgeRef> for usize { fn into(self) -> EdgeRef { EdgeRef{idx: self} } }
-impl Default for EdgeRef { fn default() -> Self { EdgeRef{idx: 0} } }
 
 pub struct Graph<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData> {
     next_node: AtomicUsize,

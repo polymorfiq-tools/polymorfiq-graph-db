@@ -15,7 +15,6 @@ debug = false
 lib = { path = "../lib" }
 wee_alloc = { version = "0.4.2", optional = true }
 
-
 [features]
-alloc = ["wee_alloc"]
+alloc = ["wee_alloc", "lib/alloc"]
 default = []

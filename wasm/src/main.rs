@@ -41,8 +41,8 @@ pub extern "C" fn start(_: isize, _: *const *const u8) -> isize {
     unsafe {
         while (max_node_count() * NODES) < nodes {
             GRAPHS.add(lib::Graph::new(
-                Node::new(0, NodeDataContainer::new()),
-                Edge::new(0, EdgeDataContainer::new())
+                [Node::new(0, NodeDataContainer::new()); NODES],
+                [Edge::new(0, EdgeDataContainer::new()); EDGES]
             ));
         }
     }

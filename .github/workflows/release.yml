@@ -97,9 +97,7 @@ jobs:
           git add bin/build-alloc.wasm;
 
           wat-wasm wasm/wasm-orig.wasm -o bin/build-no_alloc.wat;
-          wat-wasm wasm/wasm-alloc-orig.wasm -o bin/build-alloc.wat;
           git add bin/build-no_alloc.wat;
-          git add bin/build-alloc.wat;
 
           git diff-index --quiet HEAD || git commit -m "Automated wat-wasm";
           git push;

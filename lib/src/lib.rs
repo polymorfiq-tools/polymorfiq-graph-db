@@ -24,10 +24,21 @@ mod tests {
 
     #[test]
     fn create_graph() {
-        let mut _graph = GraphList::new(
+        GraphList::new(
             [Node::new(0, [0u8; NODE_BYTES]); NODES],
             [Edge::new(0, [0u8; EDGE_BYTES]); EDGES],
         );
+    }
+
+    #[test]
+    fn test_max_counts() {
+        let graph = GraphList::new(
+            [Node::new(0, [0u8; NODE_BYTES]); NODES],
+            [Edge::new(0, [0u8; EDGE_BYTES]); EDGES],
+        );
+
+        assert_eq!(graph.max_node_count(), NODES);
+        assert_eq!(graph.max_edge_count(), EDGES);
     }
 
     #[test]

@@ -1,32 +1,33 @@
 use core::default::Default;
-use core::ops::Index;
-use core::ops::IndexMut;
 use crate::Node;
 
 pub struct NodeList<const NODES: usize, NodeID, NodeData> {
     nodes: [Node<NodeID, NodeData>; NODES]
 }
 
-impl<const NODES: usize, NodeID, NodeData> NodeList<NODES, NodeID, NodeData>
-    where   NodeID: core::marker::Copy,
-            NodeData: core::marker::Copy
-{
-    pub const fn new(node: Node<NodeID, NodeData>) -> Self {
-        Self{nodes: [node; NODES]}
+impl<const NODES: usize, NodeID, NodeData> NodeList<NODES, NodeID, NodeData> {
+    pub const fn new(nodes: [Node<NodeID, NodeData>; NODES]) -> Self {
+        Self{nodes: nodes}
     }
-}
 
-impl<const NODES: usize, NodeID, NodeData> Index<usize> for NodeList<NODES, NodeID, NodeData> {
-    type Output = Node<NodeID, NodeData>;
-
-    fn index(&self, idx: usize) -> &Self::Output {
-        &self.nodes[idx as usize]
+    pub fn len(&self) -> usize {
+        NODES
     }
-}
 
-impl<const NODES: usize, NodeID, NodeData> IndexMut<usize> for NodeList<NODES, NodeID, NodeData> {
-    fn index_mut(&mut self, idx: usize) -> &mut Self::Output {
-        &mut self.nodes[idx as usize]
+    pub fn get(&self, idx: usize) -> Option<&Node<NodeID, NodeData>> {
+        if idx < NODES {
+            Some(&self.nodes[idx as usize])
+        } else {
+            None
+        }
+    }
+
+    pub fn get_mut(&mut self, idx: usize) -> Option<&mut Node<NodeID, NodeData>> {
+        if idx < NODES {
+            Some(&mut self.nodes[idx as usize])
+        } else {
+            None
+        }
     }
 }
 

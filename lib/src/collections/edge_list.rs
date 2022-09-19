@@ -1,32 +1,33 @@
 use core::default::Default;
-use core::ops::Index;
-use core::ops::IndexMut;
 use crate::Edge;
 
 pub struct EdgeList<const EDGES: usize, EdgeID, EdgeData> {
     edges: [Edge<EdgeID, EdgeData>; EDGES]
 }
 
-impl<const EDGES: usize, EdgeID, EdgeData> EdgeList<EDGES, EdgeID, EdgeData>
-    where   EdgeID: core::marker::Copy,
-            EdgeData: core::marker::Copy
-{
-    pub const fn new(edge: Edge<EdgeID, EdgeData>) -> Self {
-        Self{edges: [edge; EDGES]}
+impl<const EDGES: usize, EdgeID, EdgeData> EdgeList<EDGES, EdgeID, EdgeData> {
+    pub const fn new(edges: [Edge<EdgeID, EdgeData>; EDGES]) -> Self {
+        Self{edges: edges}
     }
-}
 
-impl<const EDGES: usize, EdgeID, EdgeData> Index<usize> for EdgeList<EDGES, EdgeID, EdgeData> {
-    type Output = Edge<EdgeID, EdgeData>;
-
-    fn index(&self, idx: usize) -> &Self::Output {
-        &self.edges[idx]
+    pub fn len(&self) -> usize {
+        EDGES
     }
-}
 
-impl<const EDGES: usize, EdgeID, EdgeData> IndexMut<usize> for EdgeList<EDGES, EdgeID, EdgeData> {
-    fn index_mut(&mut self, idx: usize) -> &mut Self::Output {
-        &mut self.edges[idx]
+    pub fn get(&self, idx: usize) -> Option<&Edge<EdgeID, EdgeData>> {
+        if idx < EDGES {
+            Some(&self.edges[idx as usize])
+        } else {
+            None
+        }
+    }
+
+    pub fn get_mut(&mut self, idx: usize) -> Option<&mut Edge<EdgeID, EdgeData>> {
+        if idx < EDGES {
+            Some(&mut self.edges[idx as usize])
+        } else {
+            None
+        }
     }
 }
 

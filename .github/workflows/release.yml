@@ -14,9 +14,14 @@ jobs:
       working-directory: ./lib
     steps:
     - uses: actions/checkout@v2
+
     - name: Test Rust Lib
       working-directory: ${{env.working-directory}}
       run: cargo test
+    
+    - name: Test Rust Lib (with dynamic allocation)
+      working-directory: ${{env.working-directory}}
+      run: cargo test --features alloc
 
   build_wasm:
     needs: test_rust
@@ -25,6 +30,7 @@ jobs:
       working-directory: ./wasm
       wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm.wasm
       orig-wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm-orig.wasm
+      alloc-wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm-alloc.wasm
     steps:
     - uses: actions/checkout@v2
     - run: rustup +nightly target add wasm32-unknown-unknown
@@ -33,10 +39,13 @@ jobs:
       env:
         WASM_FILE: ${{env.wasm-file}}
         ORIG_WASM_FILE: ${{env.orig-wasm-file}}
+        ALLOC_WASM_FILE: ${{env.alloc-wasm-file}}
       run: |
         cargo build --release --target wasm32-unknown-unknown --verbose;
-        cd ../;
-        mv $WASM_FILE $ORIG_WASM_FILE;
+        mv ../$WASM_FILE ../$ORIG_WASM_FILE;
+
+        cargo build --release --target wasm32-unknown-unknown --features alloc --verbose;
+        mv ../$WASM_FILE ../$ALLOC_WASM_FILE;
     - name: Get Binaryen (wasm-opt)
       run: |
         wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz
@@ -47,6 +56,7 @@ jobs:
         ORIG_WASM_FILE: ${{env.orig-wasm-file}}
       run: |
         ./binaryen-version_110/bin/wasm-opt $ORIG_WASM_FILE -o $WASM_FILE --strip-debug -Oz;
+        ./binaryen-version_110/bin/wasm-opt $ALLOC_WASM_FILE -o $ALLOC_WASM_FILE --strip-debug -Oz;
 
     - uses: actions/upload-artifact@master
       with:
@@ -54,6 +64,7 @@ jobs:
         path: |
           ${{env.wasm-file}}
           ${{env.orig-wasm-file}}
+          ${{env.alloc-wasm-file}}
 
   generate_wat:
     needs: build_wasm
@@ -75,6 +86,9 @@ jobs:
           git add bin/deployed-optimized.wasm;
           wat-wasm wasm/wasm.wasm -o bin/deployed-optimized.wat;
           git add bin/deployed-optimized.wat;
+          
+          cp wasm/wasm-alloc.wasm bin/deployed-alloc.wasm;
+          git add bin/deployed-alloc.wasm;
 
           cp wasm/wasm-orig.wasm bin/deployed.wasm;
           git add bin/deployed.wasm;

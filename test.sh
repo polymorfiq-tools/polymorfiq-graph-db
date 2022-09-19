@@ -3,6 +3,7 @@ set -euxo pipefail;
 
 pushd lib;
 cargo test
+cargo test --features alloc
 popd;
 
 pushd languages/elixir;

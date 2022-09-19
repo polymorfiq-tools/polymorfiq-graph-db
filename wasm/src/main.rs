@@ -30,8 +30,8 @@ type NodeData = NodeDataContainer<NODE_DATA_BYTES>;
 type EdgeData = EdgeDataContainer<EDGE_DATA_BYTES>;
 
 static mut GRAPHS: GraphList<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = GraphList::new(
-    Node::new(0, NodeDataContainer::new()),
-    Edge::new(0, EdgeDataContainer::new())
+    [Node::new(0, NodeDataContainer::new()); NODES],
+    [Edge::new(0, EdgeDataContainer::new()); EDGES]
 );
 
 #[cfg(feature = "alloc")]
@@ -62,29 +62,33 @@ pub extern "C" fn max_edge_count() -> usize {
 
 #[no_mangle]
 pub extern "C" fn init_node(id: usize) -> usize {
-    unsafe {
-        GRAPHS.init_node(id, Default::default()).into()
+    match unsafe { GRAPHS.init_node(id, Default::default()) } {
+        Some(node) => node.into(),
+        None => 0
     }
 }
 
 #[no_mangle]
 pub extern "C" fn init_edge(id: usize, a: usize, b: usize) -> usize {
-    unsafe {
-        GRAPHS.init_edge(id, a.into(), b.into(), Default::default()).into()
+    match unsafe { GRAPHS.init_edge(id, a.into(), b.into(), Default::default()) } {
+        Some(edge) => edge.into(),
+        None => 0
     }
 }
 
 #[no_mangle]
 pub extern "C" fn node_data(ref_idx: usize) -> usize {
-    unsafe {
-        GRAPHS.node_data(ref_idx.into()).as_ptr() as *const () as usize
+    match unsafe { GRAPHS.node(ref_idx.into()) } {
+        Some(node) => node.data.as_ptr() as *const () as usize,
+        None => 0
     }
 }
 
 #[no_mangle]
 pub extern "C" fn edge_data(ref_idx: usize) -> usize {
-    unsafe {
-        GRAPHS.edge_data(ref_idx.into()).as_ptr() as *const () as usize
+    match unsafe { GRAPHS.edge(ref_idx.into()) } {
+        Some(edge) => edge.data.as_ptr() as *const () as usize,
+        None => 0
     }
 }
 

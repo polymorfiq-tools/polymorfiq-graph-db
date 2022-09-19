@@ -30,7 +30,8 @@ jobs:
       working-directory: ./wasm
       wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm.wasm
       orig-wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm-orig.wasm
-      alloc-wasm-file: wasm/target/wasm32-unknown-unknown/release/wasm-alloc.wasm
+      orig-alloc-file: wasm/target/wasm32-unknown-unknown/release/wasm-alloc-orig.wasm
+      alloc-file: wasm/target/wasm32-unknown-unknown/release/wasm-alloc.wasm
     steps:
     - uses: actions/checkout@v2
     - run: rustup +nightly target add wasm32-unknown-unknown
@@ -39,13 +40,14 @@ jobs:
       env:
         WASM_FILE: ${{env.wasm-file}}
         ORIG_WASM_FILE: ${{env.orig-wasm-file}}
-        ALLOC_WASM_FILE: ${{env.alloc-wasm-file}}
+        ALLOC_FILE: ${{env.alloc-file}}
+        ORIG_ALLOC_FILE: ${{env.orig-alloc-file}}
       run: |
         cargo build --release --target wasm32-unknown-unknown --verbose;
         mv ../$WASM_FILE ../$ORIG_WASM_FILE;
 
         cargo build --release --target wasm32-unknown-unknown --features alloc --verbose;
-        mv ../$WASM_FILE ../$ALLOC_WASM_FILE;
+        mv ../$WASM_FILE ../$ORIG_ALLOC_FILE;
     - name: Get Binaryen (wasm-opt)
       run: |
         wget https://github.com/WebAssembly/binaryen/releases/download/version_110/binaryen-version_110-x86_64-linux.tar.gz
@@ -54,9 +56,11 @@ jobs:
       env:
         WASM_FILE: ${{env.wasm-file}}
         ORIG_WASM_FILE: ${{env.orig-wasm-file}}
+        ALLOC_FILE: ${{env.alloc-file}}
+        ORIG_ALLOC_FILE: ${{env.orig-alloc-file}}
       run: |
         ./binaryen-version_110/bin/wasm-opt $ORIG_WASM_FILE -o $WASM_FILE --strip-debug -Oz;
-        ./binaryen-version_110/bin/wasm-opt $ALLOC_WASM_FILE -o $ALLOC_WASM_FILE --strip-debug -Oz;
+        ./binaryen-version_110/bin/wasm-opt $ORIG_ALLOC_FILE -o $ALLOC_FILE --strip-debug -Oz;
 
     - uses: actions/upload-artifact@master
       with:
@@ -64,7 +68,8 @@ jobs:
         path: |
           ${{env.wasm-file}}
           ${{env.orig-wasm-file}}
-          ${{env.alloc-wasm-file}}
+          ${{env.alloc-file}}
+          ${{env.orig-alloc-file}}
 
   generate_wat:
     needs: build_wasm
@@ -82,18 +87,16 @@ jobs:
           git config --global user.name 'Automated WAT-WASM';
           git config --global user.email 'automated-wasm@users.noreply.github.com';
           
-          cp wasm/wasm.wasm bin/deployed-optimized.wasm;
-          git add bin/deployed-optimized.wasm;
-          wat-wasm wasm/wasm.wasm -o bin/deployed-optimized.wat;
-          git add bin/deployed-optimized.wat;
+          cp wasm/wasm.wasm bin/build.wasm;
+          git add bin/build-no_alloc.wasm;
           
-          cp wasm/wasm-alloc.wasm bin/deployed-alloc.wasm;
-          git add bin/deployed-alloc.wasm;
+          cp wasm/wasm-alloc.wasm bin/build-alloc.wasm;
+          git add bin/build-alloc.wasm;
 
-          cp wasm/wasm-orig.wasm bin/deployed.wasm;
-          git add bin/deployed.wasm;
-          wat-wasm wasm/wasm-orig.wasm -o bin/deployed.wat;
-          git add bin/deployed.wat;
+          wat-wasm wasm/wasm-orig.wasm -o bin/build-no_alloc.wat;
+          wat-wasm wasm/wasm-alloc-orig.wasm -o bin/build-alloc.wat;
+          git add bin/build-no_alloc.wat;
+          git add bin/build-alloc.wat;
 
           git diff-index --quiet HEAD || git commit -m "Automated wat-wasm";
           git push;

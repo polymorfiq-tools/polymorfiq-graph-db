@@ -46,7 +46,7 @@ jobs:
     - name: Build (alloc)
       working-directory: ${{env.working-directory}}
       env:
-        ALLOC_FILE: ${{env.alloc-file}}
+        WASM_FILE: ${{env.wasm-file}}
         ORIG_ALLOC_FILE: ${{env.orig-alloc-file}}
       run: |
         cargo build --release --target wasm32-unknown-unknown --features alloc --verbose;

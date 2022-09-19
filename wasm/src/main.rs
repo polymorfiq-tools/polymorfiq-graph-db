@@ -88,9 +88,41 @@ pub extern "C" fn init_edge(id: usize, a: usize, b: usize) -> usize {
 }
 
 #[no_mangle]
+pub extern "C" fn node_id(ref_idx: usize) -> usize {
+    match unsafe { GRAPHS.node(ref_idx.into()) } {
+        Some(node) => node.id as *const () as usize,
+        None => 0
+    }
+}
+
+#[no_mangle]
 pub extern "C" fn node_data(ref_idx: usize) -> usize {
     match unsafe { GRAPHS.node(ref_idx.into()) } {
         Some(node) => node.data.as_ptr() as *const () as usize,
+        None => 0
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn edge_id(ref_idx: usize) -> usize {
+    match unsafe { GRAPHS.edge(ref_idx.into()) } {
+        Some(edge) => edge.id as *const () as usize,
+        None => 0
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn edge_a(ref_idx: usize) -> usize {
+    match unsafe { GRAPHS.edge(ref_idx.into()) } {
+        Some(edge) => edge.a.into(),
+        None => 0
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn edge_b(ref_idx: usize) -> usize {
+    match unsafe { GRAPHS.edge(ref_idx.into()) } {
+        Some(edge) => edge.b.into(),
         None => 0
     }
 }

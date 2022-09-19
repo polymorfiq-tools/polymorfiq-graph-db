@@ -3,11 +3,11 @@
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $none_=>_i32 (func (result i32)))
  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
- (memory $0 59)
+ (memory $0 21)
  (table $0 1 1 funcref)
  (global $__stack_pointer (mut i32) (i32.const 1048576))
- (global $global$1 i32 (i32.const 3848584))
- (global $global$2 i32 (i32.const 3848592))
+ (global $global$1 i32 (i32.const 1328584))
+ (global $global$2 i32 (i32.const 1328592))
  (export "memory" (memory $0))
  (export "max_node_count" (func $max_node_count))
  (export "max_edge_count" (func $max_edge_count))
@@ -28,10 +28,10 @@
  (export "__data_end" (global $global$1))
  (export "__heap_base" (global $global$2))
  (func $max_node_count (result i32)
-  (i32.const 50000)
+  (i32.const 5000)
  )
  (func $max_edge_count (result i32)
-  (i32.const 100000)
+  (i32.const 10000)
  )
  (func $edge_data_bytes (result i32)
   (i32.const 4)
@@ -57,7 +57,7 @@
    (br_if $label$1
     (i32.gt_u
      (local.get $2)
-     (i32.const 49999)
+     (i32.const 4999)
     )
    )
    (i32.store
@@ -108,7 +108,7 @@
    (br_if $label$1
     (i32.gt_u
      (local.get $4)
-     (i32.const 99999)
+     (i32.const 9999)
     )
    )
    (i32.store
@@ -119,50 +119,50 @@
        (i32.const 24)
       )
      )
-     (i32.const 1448604)
+     (i32.const 1088604)
     )
     (i32.const 0)
    )
    (i32.store
     (i32.add
      (local.get $3)
-     (i32.const 1448600)
+     (i32.const 1088600)
     )
     (local.tee $5
      (i32.div_u
       (local.get $2)
-      (i32.const 50000)
+      (i32.const 5000)
      )
     )
    )
    (i32.store
     (i32.add
      (local.get $3)
-     (i32.const 1448592)
+     (i32.const 1088592)
     )
     (local.tee $6
      (i32.div_u
       (local.get $1)
-      (i32.const 50000)
+      (i32.const 5000)
      )
     )
    )
    (i32.store
     (i32.add
      (local.get $3)
-     (i32.const 1448584)
+     (i32.const 1088584)
     )
     (local.get $0)
    )
    (i32.store
     (i32.add
      (local.get $3)
-     (i32.const 1448596)
+     (i32.const 1088596)
     )
     (i32.add
      (i32.mul
       (local.get $5)
-      (i32.const -50000)
+      (i32.const -5000)
      )
      (local.get $2)
     )
@@ -170,12 +170,12 @@
    (i32.store
     (i32.add
      (local.get $3)
-     (i32.const 1448588)
+     (i32.const 1088588)
     )
     (i32.add
      (i32.mul
       (local.get $6)
-      (i32.const -50000)
+      (i32.const -5000)
      )
      (local.get $1)
     )
@@ -192,7 +192,7 @@
     (i32.shl
      (i32.rem_u
       (local.get $0)
-      (i32.const 50000)
+      (i32.const 5000)
      )
      (i32.const 3)
     )
@@ -206,7 +206,7 @@
     (i32.shl
      (i32.rem_u
       (local.get $0)
-      (i32.const 50000)
+      (i32.const 5000)
      )
      (i32.const 3)
     )
@@ -221,7 +221,7 @@
    (i32.shl
     (i32.rem_u
      (local.get $0)
-     (i32.const 50000)
+     (i32.const 5000)
     )
     (i32.const 3)
    )
@@ -234,11 +234,11 @@
     (i32.mul
      (i32.rem_u
       (local.get $0)
-      (i32.const 100000)
+      (i32.const 10000)
      )
      (i32.const 24)
     )
-    (i32.const 1448584)
+    (i32.const 1088584)
    )
   )
  )
@@ -251,20 +251,20 @@
        (i32.mul
         (i32.rem_u
          (local.get $0)
-         (i32.const 100000)
+         (i32.const 10000)
         )
         (i32.const 24)
        )
       )
-      (i32.const 1448592)
+      (i32.const 1088592)
      )
     )
-    (i32.const 50000)
+    (i32.const 5000)
    )
    (i32.load
     (i32.add
      (local.get $0)
-     (i32.const 1448588)
+     (i32.const 1088588)
     )
    )
   )
@@ -278,20 +278,20 @@
        (i32.mul
         (i32.rem_u
          (local.get $0)
-         (i32.const 100000)
+         (i32.const 10000)
         )
         (i32.const 24)
        )
       )
-      (i32.const 1448600)
+      (i32.const 1088600)
      )
     )
-    (i32.const 50000)
+    (i32.const 5000)
    )
    (i32.load
     (i32.add
      (local.get $0)
-     (i32.const 1448596)
+     (i32.const 1088596)
     )
    )
   )
@@ -301,11 +301,11 @@
    (i32.mul
     (i32.rem_u
      (local.get $0)
-     (i32.const 100000)
+     (i32.const 10000)
     )
     (i32.const 24)
    )
-   (i32.const 1448604)
+   (i32.const 1088604)
   )
  )
  (func $set_edge_id (param $0 i32) (param $1 i32) (result i32)
@@ -314,11 +314,11 @@
     (i32.mul
      (i32.rem_u
       (local.get $0)
-      (i32.const 100000)
+      (i32.const 10000)
      )
      (i32.const 24)
     )
-    (i32.const 1448584)
+    (i32.const 1088584)
    )
    (local.get $1)
   )
@@ -332,29 +332,29 @@
      (i32.mul
       (i32.rem_u
        (local.get $0)
-       (i32.const 100000)
+       (i32.const 10000)
       )
       (i32.const 24)
      )
     )
-    (i32.const 1448592)
+    (i32.const 1088592)
    )
    (local.tee $2
     (i32.div_u
      (local.get $1)
-     (i32.const 50000)
+     (i32.const 5000)
     )
    )
   )
   (i32.store
    (i32.add
     (local.get $0)
-    (i32.const 1448588)
+    (i32.const 1088588)
    )
    (i32.add
     (i32.mul
      (local.get $2)
-     (i32.const -50000)
+     (i32.const -5000)
     )
     (local.get $1)
    )
@@ -369,29 +369,29 @@
      (i32.mul
       (i32.rem_u
        (local.get $0)
-       (i32.const 100000)
+       (i32.const 10000)
       )
       (i32.const 24)
      )
     )
-    (i32.const 1448600)
+    (i32.const 1088600)
    )
    (local.tee $2
     (i32.div_u
      (local.get $1)
-     (i32.const 50000)
+     (i32.const 5000)
     )
    )
   )
   (i32.store
    (i32.add
     (local.get $0)
-    (i32.const 1448596)
+    (i32.const 1088596)
    )
    (i32.add
     (i32.mul
      (local.get $2)
-     (i32.const -50000)
+     (i32.const -5000)
     )
     (local.get $1)
    )

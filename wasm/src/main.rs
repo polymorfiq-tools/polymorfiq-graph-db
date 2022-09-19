@@ -20,12 +20,23 @@ extern "C" {
     static nodes: usize;
 }
 
+const fn parse_u32(s: &str)->usize {
+    let mut out:u32 = 0;
+    let mut i:usize = 0;
+    while i<s.len() {
+        out *= 10;
+        out += (s.as_bytes()[i] - b'0') as u32;
+        i += 1;
+    }
+    out as usize
+}
+
 type NodeID = usize;
 type EdgeID = usize;
-pub const NODES: usize = 5000;
-pub const EDGES: usize = 5000;
-pub const NODE_DATA_BYTES: usize = 50000;
-pub const EDGE_DATA_BYTES: usize = 50000;
+pub const NODES: usize = parse_u32(env!("NODES_PER_GRAPH", "NODES_PER_GRAPH not set"));
+pub const EDGES: usize = parse_u32(env!("EDGES_PER_GRAPH", "EDGES_PER_GRAPH not set"));
+pub const NODE_DATA_BYTES: usize = parse_u32(env!("NODE_DATA_BYTES", "NODE_DATA_BYTES not set"));
+pub const EDGE_DATA_BYTES: usize = parse_u32(env!("EDGE_DATA_BYTES", "EDGE_DATA_BYTES not set"));
 type NodeData = NodeDataContainer<NODE_DATA_BYTES>;
 type EdgeData = EdgeDataContainer<EDGE_DATA_BYTES>;
 

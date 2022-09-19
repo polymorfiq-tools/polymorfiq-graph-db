@@ -1,2 +1,8 @@
 [build]
 target = "wasm32-unknown-unknown"
+
+[env]
+NODES_PER_GRAPH = "50000"
+EDGES_PER_GRAPH = "100000"
+NODE_DATA_BYTES = "4"
+EDGE_DATA_BYTES = "4"

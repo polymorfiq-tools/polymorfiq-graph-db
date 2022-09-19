@@ -106,7 +106,18 @@ pub extern "C" fn node_id(ref_idx: usize) -> usize {
 }
 
 #[no_mangle]
-pub extern "C" fn node_data(ref_idx: usize) -> usize {
+pub extern "C" fn set_node_id(ref_idx: usize, id: usize) -> usize {
+    match unsafe { GRAPHS.mut_node(ref_idx.into()) } {
+        Some(node) => {
+            node.id = id.into();
+            1
+        },
+        None => 0
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn node_data_ptr(ref_idx: usize) -> usize {
     match unsafe { GRAPHS.node(ref_idx.into()) } {
         Some(node) => node.data.as_ptr() as *const () as usize,
         None => 0
@@ -138,9 +149,42 @@ pub extern "C" fn edge_b(ref_idx: usize) -> usize {
 }
 
 #[no_mangle]
-pub extern "C" fn edge_data(ref_idx: usize) -> usize {
+pub extern "C" fn edge_data_ptr(ref_idx: usize) -> usize {
     match unsafe { GRAPHS.edge(ref_idx.into()) } {
         Some(edge) => edge.data.as_ptr() as *const () as usize,
+        None => 0
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn set_edge_id(ref_idx: usize, id: usize) -> usize {
+    match unsafe { GRAPHS.mut_edge(ref_idx.into()) } {
+        Some(edge) => {
+            edge.id = id.into();
+            1
+        },
+        None => 0
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn set_edge_a(ref_idx: usize, a: usize) -> usize {
+    match unsafe { GRAPHS.mut_edge(ref_idx.into()) } {
+        Some(edge) => {
+            edge.a = a.into();
+            1
+        },
+        None => 0
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn set_edge_b(ref_idx: usize, b: usize) -> usize {
+    match unsafe { GRAPHS.mut_edge(ref_idx.into()) } {
+        Some(edge) => {
+            edge.b = b.into();
+            1
+        },
         None => 0
     }
 }

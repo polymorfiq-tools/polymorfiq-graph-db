@@ -12,7 +12,7 @@ pub struct GraphList<const NODES: usize, const EDGES: usize, NodeID, EdgeID, Nod
 }
 
 impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData> GraphList<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> {
-    pub const fn new(nodes: [Node<NodeID, NodeData>; NODES], edges: [Edge<EdgeID, EdgeData>; EDGES]) -> Self {
+    pub const fn new(nodes: [Node<NodeID, NodeData>; NODES], edges: [Edge<NODES, EdgeID, EdgeData>; EDGES]) -> Self {
         Self{
             graphs: Vec::new(),
             init_nodes: AtomicUsize::new(0),
@@ -52,7 +52,7 @@ impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData>
         let (graph_num, _) = Self::graph_pos_for_edge_idx(next_edge);
 
         if graph_num < self.len() {
-            match self.mut_graph(graph_num).init_edge(id, a.orig, b.orig, data) {
+            match self.mut_graph(graph_num).init_edge(id, a, b, data) {
                 Some(edge_ref) => Some(GraphListEdgeRef::new(edge_ref, graph_num)),
                 None => None
             }
@@ -83,7 +83,7 @@ impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData>
         }
     }
 
-    pub fn edge(&self, list_ref: GraphListEdgeRef<EDGES>) -> Option<&Edge<EdgeID, EdgeData>> {
+    pub fn edge(&self, list_ref: GraphListEdgeRef<EDGES>) -> Option<&Edge<NODES, EdgeID, EdgeData>> {
         if list_ref.graph_num < self.len() {
             match self.graph(list_ref.graph_num).edge(list_ref.orig) {
                 Some(edge) => Some(edge),
@@ -94,7 +94,7 @@ impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData>
         }
     }
 
-    pub fn mut_edge(&mut self, list_ref: GraphListEdgeRef<EDGES>) -> Option<&mut Edge<EdgeID, EdgeData>> {
+    pub fn mut_edge(&mut self, list_ref: GraphListEdgeRef<EDGES>) -> Option<&mut Edge<NODES, EdgeID, EdgeData>> {
         if list_ref.graph_num < self.len() {
             match self.mut_graph(list_ref.graph_num).mut_edge(list_ref.orig) {
                 Some(edge) => Some(edge),

@@ -3,7 +3,7 @@ use crate::{NodeRef, EdgeRef};
 #[derive(Clone, Copy)]
 pub struct GraphListNodeRef<const NODES: usize>{ pub(super) orig: NodeRef, pub(super) graph_num: usize }
 impl<const NODES: usize> GraphListNodeRef<NODES> {
-    pub(super) const fn new(node_ref: NodeRef, graph_num: usize) -> Self {
+    pub(crate) const fn new(node_ref: NodeRef, graph_num: usize) -> Self {
         Self{orig: node_ref, graph_num: graph_num}
     }
 }
@@ -32,7 +32,7 @@ impl<const NODES: usize> Default for GraphListNodeRef<NODES> {
 #[derive(Clone, Copy)]
 pub struct GraphListEdgeRef<const EDGES: usize>{ pub(super) orig: EdgeRef, pub(super) graph_num: usize }
 impl<const EDGES: usize> GraphListEdgeRef<EDGES> {
-    pub(super) const fn new(edge_ref: EdgeRef, graph_num: usize) -> Self {
+    pub(crate) const fn new(edge_ref: EdgeRef, graph_num: usize) -> Self {
         Self{orig: edge_ref, graph_num: graph_num}
     }
 }

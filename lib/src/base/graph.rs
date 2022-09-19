@@ -1,21 +1,22 @@
 use core::default::Default;
 use core::sync::atomic::AtomicUsize;
 use core::sync::atomic::Ordering;
+use crate::collections::NodeList;
+use crate::collections::EdgeList;
+use crate::collections::GraphListNodeRef;
 use super::Node;
 use super::Edge;
 use super::{NodeRef, EdgeRef};
-use crate::collections::NodeList;
-use crate::collections::EdgeList;
 
 pub struct Graph<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData> {
     next_node: AtomicUsize,
     next_edge: AtomicUsize,  
     pub nodes: NodeList<NODES, NodeID, NodeData>,
-    pub edges: EdgeList<EDGES, EdgeID, EdgeData>
+    pub edges: EdgeList<NODES, EDGES, EdgeID, EdgeData>
 }
 
 impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData> Graph<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> {
-    pub const fn new(nodes: [Node<NodeID, NodeData>; NODES], edges: [Edge<EdgeID, EdgeData>; EDGES]) -> Self {
+    pub const fn new(nodes: [Node<NodeID, NodeData>; NODES], edges: [Edge<NODES, EdgeID, EdgeData>; EDGES]) -> Self {
         Self {
             next_node: AtomicUsize::new(0),
             next_edge: AtomicUsize::new(0),
@@ -39,7 +40,7 @@ impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData>
         }
     }
 
-    pub fn init_edge(&mut self, id: EdgeID, a: NodeRef, b: NodeRef, data: EdgeData) -> Option<EdgeRef> {
+    pub fn init_edge(&mut self, id: EdgeID, a: GraphListNodeRef<NODES>, b: GraphListNodeRef<NODES>, data: EdgeData) -> Option<EdgeRef> {
         let idx = self.next_edge.fetch_add(1, Ordering::AcqRel);
         let edge_ref = idx.into();
 
@@ -64,11 +65,11 @@ impl<const NODES: usize, const EDGES: usize, NodeID, EdgeID, NodeData, EdgeData>
         self.nodes.get_mut(at.idx)
     }
 
-    pub fn edge(&self, at: EdgeRef) -> Option<&Edge<EdgeID, EdgeData>> {
+    pub fn edge(&self, at: EdgeRef) -> Option<&Edge<NODES, EdgeID, EdgeData>> {
         self.edges.get(at.idx)
     }
 
-    pub fn mut_edge(&mut self, at: EdgeRef) -> Option<&mut Edge<EdgeID, EdgeData>> {
+    pub fn mut_edge(&mut self, at: EdgeRef) -> Option<&mut Edge<NODES, EdgeID, EdgeData>> {
         self.edges.get_mut(at.idx)
     }
 }

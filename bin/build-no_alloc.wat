@@ -11,7 +11,11 @@
  (export "max_edge_count" (func $max_edge_count))
  (export "init_node" (func $init_node))
  (export "init_edge" (func $init_edge))
+ (export "node_id" (func $node_id))
  (export "node_data" (func $node_data))
+ (export "edge_id" (func $edge_id))
+ (export "edge_a" (func $edge_a))
+ (export "edge_b" (func $edge_b))
  (export "edge_data" (func $edge_data))
  (export "__data_end" (global $global$1))
  (export "__heap_base" (global $global$2))
@@ -139,6 +143,20 @@
   )
   (local.get $3)
  )
+ (func $node_id (param $0 i32) (result i32)
+  (i32.load
+   (i32.add
+    (i32.shl
+     (i32.rem_u
+      (local.get $0)
+      (i32.const 50000)
+     )
+     (i32.const 3)
+    )
+    (i32.const 1048584)
+   )
+  )
+ )
  (func $node_data (param $0 i32) (result i32)
   (i32.add
    (i32.shl
@@ -149,6 +167,48 @@
     (i32.const 3)
    )
    (i32.const 1048588)
+  )
+ )
+ (func $edge_id (param $0 i32) (result i32)
+  (i32.load
+   (i32.add
+    (i32.shl
+     (i32.rem_u
+      (local.get $0)
+      (i32.const 100000)
+     )
+     (i32.const 4)
+    )
+    (i32.const 1448584)
+   )
+  )
+ )
+ (func $edge_a (param $0 i32) (result i32)
+  (i32.load
+   (i32.add
+    (i32.shl
+     (i32.rem_u
+      (local.get $0)
+      (i32.const 100000)
+     )
+     (i32.const 4)
+    )
+    (i32.const 1448588)
+   )
+  )
+ )
+ (func $edge_b (param $0 i32) (result i32)
+  (i32.load
+   (i32.add
+    (i32.shl
+     (i32.rem_u
+      (local.get $0)
+      (i32.const 100000)
+     )
+     (i32.const 4)
+    )
+    (i32.const 1448592)
+   )
   )
  )
  (func $edge_data (param $0 i32) (result i32)

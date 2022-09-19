@@ -72,6 +72,16 @@ pub extern "C" fn max_edge_count() -> usize {
 }
 
 #[no_mangle]
+pub extern "C" fn node_data_bytes() -> usize {
+    NODE_DATA_BYTES
+}
+
+#[no_mangle]
+pub extern "C" fn edge_data_bytes() -> usize {
+    EDGE_DATA_BYTES
+}
+
+#[no_mangle]
 pub extern "C" fn init_node(id: usize) -> usize {
     match unsafe { GRAPHS.init_node(id, Default::default()) } {
         Some(node) => node.into(),

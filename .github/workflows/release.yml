@@ -90,7 +90,7 @@ jobs:
           git config --global user.name 'Automated WAT-WASM';
           git config --global user.email 'automated-wasm@users.noreply.github.com';
           
-          cp wasm/wasm.wasm bin/build.wasm;
+          cp wasm/wasm.wasm bin/build-no_alloc.wasm;
           git add bin/build-no_alloc.wasm;
           
           cp wasm/wasm-alloc.wasm bin/build-alloc.wasm;

@@ -6,6 +6,7 @@ extern crate libc;
 
 use lib::{Edge, Node};
 use lib::collections::GraphList;
+use lib::collections::GraphListNodeRef;
 
 #[derive(Clone, core::marker::Copy)]
 enum Relationship {
@@ -27,26 +28,32 @@ pub const EDGE_DATA_BYTES: usize = 0;
 type NodeData = [u8; NODE_DATA_BYTES];
 type EdgeData = [u8; EDGE_DATA_BYTES];
 
+static mut GRAPH: GraphList<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = GraphList::new(
+    [Node::new("", [0u8; NODE_DATA_BYTES]); NODES],
+    [Edge::new(Relationship::None, [0u8; EDGE_DATA_BYTES]); EDGES]
+);
+
+fn init_node(id: NodeID<'static>, data: NodeData) -> Option<GraphListNodeRef<NODES>> {
+    unsafe { GRAPH.init_node(id, data) }
+}
+
+fn init_edge(id: EdgeID, a: GraphListNodeRef<NODES>, b: GraphListNodeRef<NODES>, data: EdgeData) {
+    unsafe { GRAPH.init_edge(id, a, b, data) };
+}
+
 #[no_mangle]
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    static mut GRAPH: GraphList<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = GraphList::new(
-        [Node::new("", [0u8; NODE_DATA_BYTES]); NODES],
-        [Edge::new(Relationship::None, [0u8; EDGE_DATA_BYTES]); EDGES]
-    );
+    let cory = init_node("Cory", []).unwrap();
+    let users = init_node("Users", []).unwrap();
+    let teams = init_node("Teams", []).unwrap();
+    let objects = init_node("Objects", []).unwrap();
 
-    let cory = unsafe { GRAPH.init_node("Cory", []).unwrap() };
-    let users = unsafe { GRAPH.init_node("Users", []).unwrap() };
-    let teams = unsafe { GRAPH.init_node("Teams", []).unwrap() };
-    let objects = unsafe { GRAPH.init_node("Objects", []).unwrap() };
-
-    unsafe {
-        GRAPH.init_edge(Relationship::Create, users, objects, []);
-        GRAPH.init_edge(Relationship::Read, users, objects, []);
-        GRAPH.init_edge(Relationship::Update, users, objects, []);
-        GRAPH.init_edge(Relationship::Delete, users, objects, []);
-        GRAPH.init_edge(Relationship::Is, cory, users, []);
-        GRAPH.init_edge(Relationship::PartOf, users, teams, []);
-    };
+    init_edge(Relationship::Create, users, objects, []);
+    init_edge(Relationship::Read, users, objects, []);
+    init_edge(Relationship::Update, users, objects, []);
+    init_edge(Relationship::Delete, users, objects, []);
+    init_edge(Relationship::Is, cory, users, []);
+    init_edge(Relationship::PartOf, users, teams, []);
 
     0
 }

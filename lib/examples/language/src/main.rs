@@ -16,7 +16,13 @@ enum Relationship {
     Update,
     Delete,
     PartOf,
+    MemberOf,
     None
+}
+
+enum Fact {
+    Is,
+    MemberOf
 }
 
 type NodeID<'a> = &'a str;
@@ -43,17 +49,39 @@ fn init_edge(id: EdgeID, a: GraphListNodeRef<NODES>, b: GraphListNodeRef<NODES>,
 
 #[no_mangle]
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    let cory = init_node("Cory", []).unwrap();
-    let users = init_node("Users", []).unwrap();
-    let teams = init_node("Teams", []).unwrap();
-    let objects = init_node("Objects", []).unwrap();
+    /*
+     *    - Syntax -
+     *    This is defining what is possible in the graph.
+     * 
+     *    It states the concepts that exist in the universe.
+     *    It states the relationships that ARE POSSIBLE to make.
+     *    If a relationship between two concepts is not stated here, it cannot happen.
+     */
 
-    init_edge(Relationship::Create, users, objects, []);
-    init_edge(Relationship::Read, users, objects, []);
-    init_edge(Relationship::Update, users, objects, []);
-    init_edge(Relationship::Delete, users, objects, []);
-    init_edge(Relationship::Is, cory, users, []);
-    init_edge(Relationship::PartOf, users, teams, []);
+    let syntax = init_node("Syntax", []).unwrap();
+    let users = init_node("Users", []).unwrap();
+    init_edge(Relationship::PartOf, users, syntax, []);
+    
+    let teams = init_node("Teams", []).unwrap();
+    init_edge(Relationship::PartOf, teams, syntax, []);
+    init_edge(Relationship::MemberOf, users, teams, []);
+
+    let objects = init_node("Objects", []).unwrap();
+    init_edge(Relationship::PartOf, objects, syntax, []);
+    init_edge(Relationship::Create, teams, objects, []);
+    init_edge(Relationship::Read, teams, objects, []);
+    init_edge(Relationship::Update, teams, objects, []);
+    init_edge(Relationship::Delete, teams, objects, []);
+
+    /*
+     *    - Semantics -
+     *    This is defining UNDER WHAT CONDITIONS relationships are implied
+     * 
+     *    Given a type of object and a fact about it, a relationship may be implied.
+     *    The semantics decide what relationships are implied, given facts.
+     *    A relationship cannot be implied, that is not part of the Syntax.
+     */
+    let _semantics = init_node("Semantics", []).unwrap();
 
     0
 }

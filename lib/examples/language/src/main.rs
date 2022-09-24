@@ -54,6 +54,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             posts = node "Posts";
             
             users -Are-> subjects;
+            members -Are-> users;
             teams -Have-> members;
             teams -CanPostTo-> topics;
             teams -CanCreate, CanRead, CanUpdate, CanDestroy-> topics;

@@ -1,28 +1,21 @@
 #![no_std]
 #![no_main]
 
-
 extern crate libc;
 
 use lib::{Edge, Node};
 use lib::collections::GraphList;
-use lib::collections::GraphListNodeRef;
 
 #[derive(Clone, core::marker::Copy)]
 enum Relationship {
-    Is,
-    Create,
-    Read,
-    Update,
-    Delete,
-    PartOf,
-    MemberOf,
-    None
-}
-
-enum Fact {
-    Is,
-    MemberOf
+    None,
+    Are,
+    Have,
+    CanCreate,
+    CanRead,
+    CanUpdate,
+    CanDestroy,
+    CanPostTo,
 }
 
 type NodeID<'a> = &'a str;
@@ -39,14 +32,6 @@ static mut GRAPH: GraphList<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = 
     [Edge::new(Relationship::None, [0u8; EDGE_DATA_BYTES]); EDGES]
 );
 
-fn init_node(id: NodeID<'static>, data: NodeData) -> Option<GraphListNodeRef<NODES>> {
-    unsafe { GRAPH.init_node(id, data) }
-}
-
-fn init_edge(id: EdgeID, a: GraphListNodeRef<NODES>, b: GraphListNodeRef<NODES>, data: EdgeData) {
-    unsafe { GRAPH.init_edge(id, a, b, data) };
-}
-
 #[no_mangle]
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     /*
@@ -58,20 +43,23 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
      *    If a relationship between two concepts is not stated here, it cannot happen.
      */
 
-    let syntax = init_node("Syntax", []).unwrap();
-    let users = init_node("Users", []).unwrap();
-    init_edge(Relationship::PartOf, users, syntax, []);
-    
-    let teams = init_node("Teams", []).unwrap();
-    init_edge(Relationship::PartOf, teams, syntax, []);
-    init_edge(Relationship::MemberOf, users, teams, []);
 
-    let objects = init_node("Objects", []).unwrap();
-    init_edge(Relationship::PartOf, objects, syntax, []);
-    init_edge(Relationship::Create, teams, objects, []);
-    init_edge(Relationship::Read, teams, objects, []);
-    init_edge(Relationship::Update, teams, objects, []);
-    init_edge(Relationship::Delete, teams, objects, []);
+    unsafe {
+        lib::construct! {GRAPH, Relationship,
+            subjects = node "Subjects";
+            users = node "Users";
+            members = node "Members";
+            teams = node "Teams";
+            topics = node "Topics";
+            posts = node "Posts";
+            
+            users -Are-> subjects;
+            teams -Have-> members;
+            teams -CanPostTo-> topics;
+            teams -CanCreate, CanRead, CanUpdate, CanDestroy-> topics;
+            topics -Have-> posts;
+        };
+    }
 
     /*
      *    - Semantics -
@@ -81,7 +69,11 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
      *    The semantics decide what relationships are implied, given facts.
      *    A relationship cannot be implied, that is not part of the Syntax.
      */
-    let _semantics = init_node("Semantics", []).unwrap();
+    unsafe {
+        lib::construct! {GRAPH, Relationship,
+            node "Semantics";
+        };
+    }
 
     0
 }

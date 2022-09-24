@@ -7,6 +7,7 @@ pub use base::NodeRef;
 pub use base::EdgeRef;
 
 pub mod collections;
+pub mod macros;
 
 #[cfg(test)]
 mod tests {

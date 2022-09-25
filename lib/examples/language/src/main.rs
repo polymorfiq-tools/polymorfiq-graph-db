@@ -12,12 +12,8 @@ enum Syntax {
     None,
     Is,
     Has,
-    CanCreate,
-    CanRead,
-    CanUpdate,
-    CanDestroy,
-    CanPostTo,
-    CanReplyTo,
+    Owns,
+    Reads
 }
 
 pub const SYNTAX_NODES: usize = 50;
@@ -30,12 +26,16 @@ static mut SYNTAX: GraphList<SYNTAX_NODES, SYNTAX_EDGES, &str, Syntax, [u8; 0], 
 };
 
 #[derive(Clone, core::marker::Copy)]
+enum Action {
+    ReplyTo,
+}
+
+#[derive(Clone, core::marker::Copy)]
 enum Semantics {
     None,
-    StartsAt,
     ReflectsOn,
     Relates(Syntax),
-    Implied(Syntax)
+    Allowed(Action)
 }
 
 #[derive(Clone, Copy)]
@@ -61,14 +61,12 @@ static mut SEMANTICS: GraphList<SEMANTIC_NODES, SEMANTIC_EDGES, SemanticID, Sema
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     /*
      *    - Syntax -
-     *    This is defining what is possible in the graph.
+     *    Syntax defines what explicit relationship are possible in the graph.
      * 
      *    It states the concepts that exist in the universe.
-     *    It states the relationships that ARE POSSIBLE to make.
-     *    If a relationship between two concepts is not stated here, it cannot happen.
+     *    It states the relationships that exist in the universe
+     *    Anything not stated here, is through implication or otherwise derived.
      */
-
-
     unsafe {
         lib::construct! {SYNTAX, Syntax,
             subjects = node "Subjects";
@@ -81,20 +79,19 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             users -Is-> subjects;
             members -Has-> users;
             teams -Has-> members;
-            teams -CanPostTo-> topics;
-            teams -CanCreate, CanRead, CanUpdate, CanDestroy-> topics;
+            teams -Owns-> topics;
+            teams -Reads-> topics;
             topics -Has-> posts;
-            users -CanReplyTo-> posts;
         };
     }
 
     /*
      *    - Semantics -
-     *    This is defining UNDER WHAT CONDITIONS relationships are implied
+     *    Semantics define what is IMPLIED by a given state of the universe.
      * 
-     *    Given a type of object and a fact about it, a relationship may be implied.
-     *    The semantics decide what relationships are implied, given facts.
-     *    A relationship cannot be implied, that is not part of the Syntax.
+     *    Given a set of subjects, semantic rules can check their relationship
+     *    If the state of the universe in the check is observed, the implication is true as well
+     *    These implications cannot be explicitly written into the universe - they are derived
      */
     unsafe {
         lib::construct! {SEMANTICS, Semantics,
@@ -106,15 +103,13 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             team = node SemanticID::Object("Teams");
             topic = node SemanticID::Object("Topics");
 
-            user_can_post -StartsAt-> user;
-
             user <-Relates(Syntax::Has)- members;
             members <-Relates(Syntax::Has)- team;
-            team -Relates(Syntax::CanPostTo)-> topic;
+            team -Relates(Syntax::Owns)-> topic;
             topic -Relates(Syntax::Has)-> post;
 
             user_can_post -ReflectsOn-> user;
-            user -Implied(Syntax::CanReplyTo)-> post;
+            user -Allowed(Action::ReplyTo)-> post;
         };
     }
 

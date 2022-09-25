@@ -95,7 +95,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
      */
     unsafe {
         lib::construct! {SEMANTICS, Semantics,
-            user_can_post = node SemanticID::Rule("user_can_post");
+            user_can_reply = node SemanticID::Rule("user_can_reply");
             
             user = node SemanticID::Subject("Users", 0);
             post = node SemanticID::Subject("Post", 0);
@@ -108,7 +108,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             team -Relates(Syntax::Owns)-> topic;
             topic -Relates(Syntax::Has)-> post;
 
-            user_can_post -ReflectsOn-> user;
+            user_can_reply -ReflectsOn-> user;
             user -Allowed(Action::ReplyTo)-> post;
         };
     }

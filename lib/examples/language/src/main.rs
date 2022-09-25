@@ -1,5 +1,6 @@
 #![no_std]
 #![no_main]
+#![allow(dead_code)]
 
 extern crate libc;
 
@@ -7,30 +8,54 @@ use lib::{Edge, Node};
 use lib::collections::GraphList;
 
 #[derive(Clone, core::marker::Copy)]
-enum Relationship {
+enum Syntax {
     None,
-    Are,
-    Have,
+    Is,
+    Has,
     CanCreate,
     CanRead,
     CanUpdate,
     CanDestroy,
     CanPostTo,
+    CanReplyTo,
 }
 
-type NodeID<'a> = &'a str;
-type EdgeID<'a> = Relationship;
-pub const NODES: usize = 50;
-pub const EDGES: usize = 50;
-pub const NODE_DATA_BYTES: usize = 0;
-pub const EDGE_DATA_BYTES: usize = 0;
-type NodeData = [u8; NODE_DATA_BYTES];
-type EdgeData = [u8; EDGE_DATA_BYTES];
+pub const SYNTAX_NODES: usize = 50;
+pub const SYNTAX_EDGES: usize = 50;
+static mut SYNTAX: GraphList<SYNTAX_NODES, SYNTAX_EDGES, &str, Syntax, [u8; 0], [u8; 0]> = {
+    GraphList::new(
+        [Node::new("", [0u8; 0]); SYNTAX_NODES],
+        [Edge::new(Syntax::None, [0u8; 0]); SYNTAX_EDGES]
+    )
+};
 
-static mut GRAPH: GraphList<NODES, EDGES, NodeID, EdgeID, NodeData, EdgeData> = GraphList::new(
-    [Node::new("", [0u8; NODE_DATA_BYTES]); NODES],
-    [Edge::new(Relationship::None, [0u8; EDGE_DATA_BYTES]); EDGES]
-);
+#[derive(Clone, core::marker::Copy)]
+enum Semantics {
+    None,
+    StartsAt,
+    ReflectsOn,
+    Relates(Syntax),
+    Implied(Syntax)
+}
+
+#[derive(Clone, Copy)]
+enum SemanticID<'a> {
+    None,
+    Rule(&'a str),
+    RuleStart(&'a str, usize),
+    RuleEnd(&'a str, usize),
+    Subject(&'a str, usize),
+    Object(&'a str),
+}
+
+pub const SEMANTIC_NODES: usize = 50;
+pub const SEMANTIC_EDGES: usize = 50;
+static mut SEMANTICS: GraphList<SEMANTIC_NODES, SEMANTIC_EDGES, SemanticID, Semantics, [u8; 0], [u8; 0]> = {
+    GraphList::new(
+        [Node::new(SemanticID::None, [0u8; 0]); SEMANTIC_NODES],
+        [Edge::new(Semantics::None, [0u8; 0]); SEMANTIC_EDGES]
+    )
+};
 
 #[no_mangle]
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
@@ -45,7 +70,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
 
     unsafe {
-        lib::construct! {GRAPH, Relationship,
+        lib::construct! {SYNTAX, Syntax,
             subjects = node "Subjects";
             users = node "Users";
             members = node "Members";
@@ -53,12 +78,13 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             topics = node "Topics";
             posts = node "Posts";
             
-            users -Are-> subjects;
-            members -Are-> users;
-            teams -Have-> members;
+            users -Is-> subjects;
+            members -Has-> users;
+            teams -Has-> members;
             teams -CanPostTo-> topics;
             teams -CanCreate, CanRead, CanUpdate, CanDestroy-> topics;
-            topics -Have-> posts;
+            topics -Has-> posts;
+            users -CanReplyTo-> posts;
         };
     }
 
@@ -71,8 +97,24 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
      *    A relationship cannot be implied, that is not part of the Syntax.
      */
     unsafe {
-        lib::construct! {GRAPH, Relationship,
-            node "Semantics";
+        lib::construct! {SEMANTICS, Semantics,
+            user_can_post = node SemanticID::Rule("user_can_post");
+            
+            user = node SemanticID::Subject("Users", 0);
+            post = node SemanticID::Subject("Post", 0);
+            members = node SemanticID::Object("Members");
+            team = node SemanticID::Object("Teams");
+            topic = node SemanticID::Object("Topics");
+
+            user_can_post -StartsAt-> user;
+
+            user <-Relates(Syntax::Has)- members;
+            members <-Relates(Syntax::Has)- team;
+            team -Relates(Syntax::CanPostTo)-> topic;
+            topic -Relates(Syntax::Has)-> post;
+
+            user_can_post -ReflectsOn-> user;
+            user -Implied(Syntax::CanReplyTo)-> post;
         };
     }
 
